@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
                 val colorFragment = ColorFragment()
                 supportFragmentManager
                     .beginTransaction() //empezar una transacción
-                    .add(fragmentContainer!!.id, botonesFragment)
+                    .add(fragmentContainer!!.id, colorFragment)
                     .commit()
             }
         }

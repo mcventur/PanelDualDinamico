@@ -4,4 +4,10 @@
     android:id="@+id/layoutColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ColorFragment" />
+    tools:context=".ColorFragment" >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fragmento Colores"
+        android:layout_gravity="center"/>
+</FrameLayout>
