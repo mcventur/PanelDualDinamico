@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentContainerView
 import com.example.paneldual.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BotonesListener {
     private lateinit var binding: ActivityMainBinding
     var isDualPane: Boolean = false
 
@@ -20,7 +20,8 @@ class MainActivity : AppCompatActivity() {
 
 
         if (savedInstanceState == null) {
-            val fragmentContainer = binding.fragmentBotones
+            //El panel botones se carga en el fragmentBotones (si es una tableta) o en el fragmentMain (si es un móvil)
+            val fragmentContainer = if(isDualPane) binding.fragmentBotones else binding.fragmentMain
             val botonesFragment = BotonesFragment()
             supportFragmentManager
                 .beginTransaction() //empezar una transacción
@@ -37,5 +38,26 @@ class MainActivity : AppCompatActivity() {
                     .commit()
             }
         }
+    }
+
+    override fun onClickButton(color: Int) {
+        //Recupero la posible isntancia de ColorFragment, si existe (en tableta) y lo casteo a ColorFragment para poder llamar a sus funciones específicas
+        //ya que findFragmentById me devuelve un Fragment genérico
+        //Como puedo estar lanzando esta función desde un móvil, la referencia podría ser nulla, así que el casting es a un ColorFragment nullable
+        val loadedColorFragment = supportFragmentManager.findFragmentById(R.id.fragmentColores) as ColorFragment?
+        loadedColorFragment?.cambiarColor(color)
+        //Si estamos en un móvil, no tableta, y no está cargado el fragmento. Lo cargamos ahora
+        //Podríamos haber usado el atributo isDualPanel. Pero esta es otra forma
+        if(loadedColorFragment == null){
+            val newColorFragment = ColorFragment.newInstance(color)
+            val fragmentContainer = binding.fragmentMain
+            supportFragmentManager
+                .beginTransaction()
+                .replace(fragmentContainer!!.id, newColorFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+
     }
 }
