@@ -2,12 +2,15 @@ package com.example.paneldual
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.FragmentContainerView
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.layout.WindowMetricsCalculator
 import com.example.paneldual.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), BotonesListener {
     private lateinit var binding: ActivityMainBinding
-    var isDualPane: Boolean = false
+    private var isDualPane: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +19,9 @@ class MainActivity : AppCompatActivity(), BotonesListener {
         setContentView(binding.root)
 
         //Si la actividad contiene el id del segundo contenedor de fragment, es la tablet
-        isDualPane = findViewById<FragmentContainerView>(R.id.fragmentColores) != null
+        isDualPane = binding.fragmentColores != null
+        Log.d("MainActivity", "Es panel dual?: $isDualPane")
+        checkScreenWidth()
 
 
         if (savedInstanceState == null) {
@@ -38,6 +43,25 @@ class MainActivity : AppCompatActivity(), BotonesListener {
                     .commit()
             }
         }
+    }
+
+    fun checkScreenWidth(){
+        val metrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this)
+        val width = metrics.bounds.width()
+        val height = metrics.bounds.height()
+        val density = resources.displayMetrics.density
+        val dpWidth = width/density;
+        Log.d("MainActivity","Width calculado: $dpWidth")
+        val windowSizeClass = WindowSizeClass.compute(width/density, height/density)
+
+        // COMPACT, MEDIUM, or EXPANDED
+        val widthWindowSizeClass = windowSizeClass.windowWidthSizeClass
+        // COMPACT, MEDIUM, or EXPANDED
+        val heightWindowSizeClass = windowSizeClass.windowHeightSizeClass
+        Log.d("MainActivity","WidthWindowSizeClass: $widthWindowSizeClass")
+
+        // Use widthWindowSizeClass and heightWindowSizeClass.
+
     }
 
     override fun onClickButton(color: Int) {
